@@ -23,12 +23,25 @@ export async function initSettings() {
   const sysInfo = await system.getInfo()
   currentSettings = await settings.get()
 
+  // Skin API doesn't support crack accounts — hide the skin tab for them
+  const isCrack = shared.account?.meta.type === 'crack'
+  const skinTabBtn = document.querySelector('.nav-btn[data-tab="skin"]') as HTMLElement | null
+  if (skinTabBtn) {
+    skinTabBtn.style.display = isCrack ? 'none' : ''
+    if (isCrack && skinTabBtn.classList.contains('active')) {
+      skinTabBtn.classList.remove('active')
+      document.getElementById('tab-skin')?.classList.remove('active')
+      document.querySelector('.nav-btn[data-tab="game"]')?.classList.add('active')
+      document.getElementById('tab-game')?.classList.add('active')
+    }
+  }
+
   initUIListeners()
   initDualSlider(sysInfo.totalMem)
   initFormValues(sysInfo.resolution)
 
   const versionElem = document.getElementById('version')
-  if (versionElem) versionElem.innerText = `EML Template v${sysInfo.version}`
+  if (versionElem) versionElem.innerText = `FlugCraft Launcher v${sysInfo.version}`
 }
 
 function initUIListeners() {
@@ -59,9 +72,9 @@ function initUIListeners() {
 
   logoutBtn?.addEventListener('click', async () => {
     if (
-      await Dialog.show('Log out?', [
-        { text: 'Cancel', type: 'cancel' },
-        { text: 'Logout', type: 'danger' }
+      await Dialog.show('Wylogowac?', [
+        { text: 'Zamknij', type: 'cancel' },
+        { text: 'Wyloguj', type: 'danger' }
       ])
     ) {
       await auth.logout()
@@ -195,6 +208,7 @@ function initFormValues(resolution: { width: number; height: number }) {
   const maxInput = document.getElementById('ram-max') as HTMLInputElement
   const resolutionSelect = document.getElementById('resolution-select') as HTMLSelectElement
   const launcherActionSelect = document.getElementById('launcher-action-select') as HTMLSelectElement
+  const playActionSelect = document.getElementById('play-action-select') as HTMLSelectElement
   const javaSelect = document.getElementById('java-select') as HTMLSelectElement
 
   if (minInput) minInput.value = currentSettings.memory.min + ''
@@ -214,6 +228,7 @@ function initFormValues(resolution: { width: number; height: number }) {
       : `${currentSettings.resolution.width}x${currentSettings.resolution.height}`
   }
   if (launcherActionSelect) launcherActionSelect.value = currentSettings.launcherAction
+  if (playActionSelect) playActionSelect.value = currentSettings.playAction
   if (javaSelect) javaSelect.value = currentSettings.java === 'bundled' ? 'bundled' : 'custom'
 
   minInput.dispatchEvent(new Event('input'))
@@ -223,6 +238,7 @@ async function saveSettings() {
   const minInput = document.getElementById('ram-min') as HTMLInputElement
   const maxInput = document.getElementById('ram-max') as HTMLInputElement
   const launcherActionSelect = document.getElementById('launcher-action-select') as HTMLSelectElement
+  const playActionSelect = document.getElementById('play-action-select') as HTMLSelectElement
   const resolutionSelect = document.getElementById('resolution-select') as HTMLSelectElement
   const javaSelect = document.getElementById('java-select') as HTMLSelectElement
 
@@ -238,11 +254,13 @@ async function saveSettings() {
       fullscreen: resolutionSelect.value === 'fullscreen'
     },
     java: javaSelect.value === 'bundled' ? 'bundled' : 'path',
-    launcherAction: launcherActionSelect.value as 'close' | 'keep' | 'hide'
+    launcherAction: launcherActionSelect.value as 'close' | 'keep' | 'hide',
+    playAction: playActionSelect.value as 'server' | 'game'
   }
 
   await settings.set(newSettings)
   currentSettings = newSettings
+  window.dispatchEvent(new Event('settings:saved'))
 }
 
 async function addSkin() {
@@ -271,7 +289,7 @@ async function addSkin() {
   try {
     const result = await skin.updateSkin(skinSource, variant)
     if (!result) {
-      await Dialog.show('Failed to add skin. Please check the URL or file and try again.', [{ text: 'Close', type: 'ok' }])
+      await Dialog.show('Niepowodzenie w dodawaniu skorki. Sprawdz zalaczony plik lub URL.', [{ text: 'Zamknij', type: 'ok' }])
       return
     }
 
@@ -279,7 +297,7 @@ async function addSkin() {
     shared.resetMainView()
     shared.resetSkinViews()
   } catch (err) {
-    await Dialog.show('An error occurred while adding the skin. Please try again in few minutes.', [{ text: 'Close', type: 'ok' }])
+    await Dialog.show('Podczas dodawania wystapil blad. Zaczekaj kilka minut i sprobuj ponownie.', [{ text: 'Zamknij', type: 'ok' }])
     return
   }
 }

@@ -3,154 +3,215 @@ import { Launcher } from 'eml-lib'
 import type { Account, IProfile } from 'eml-lib'
 import type { IGameSettings } from './settings'
 import logger from 'electron-log/main'
-import { ADMINTOOL_URL } from '../const'
+import { ADMINTOOL_URL, GAME_ROOT, DEFAULT_PROFILE_SLUG } from '../const'
+import { startGameTracking, clearGamePid, stopGame } from '../gameState'
+
+function parseVersion(version: string): number[] {
+  return version.replace(/-.*$/, '').split('.').map(Number).filter((n) => !isNaN(n))
+}
+
+function isQuickPlaySupported(version: string): boolean {
+  const target = [1, 20, 0]
+  const v = parseVersion(version)
+  for (let i = 0; i < Math.max(v.length, target.length); i++) {
+    const a = v[i] ?? 0
+    const b = target[i] ?? 0
+    if (a !== b) return a > b
+  }
+  return true
+}
 
 export function registerLauncherHandlers(mainWindow: BrowserWindow) {
-  ipcMain.handle('game:launch', (_event, payload: { account: Account; settings: IGameSettings; profileSlug: string }) => {
+  ipcMain.handle('game:stop', async () => {
+    await stopGame()
+    mainWindow?.webContents.send('game:stopped')
+  })
+
+  ipcMain.handle('game:launch', async (event, payload: { account: Account; settings: IGameSettings; profileSlug: string; connectToServer?: boolean; server?: { ip: string; port?: number | null } }) => {
     const { account, settings, profileSlug } = payload
+    const slug = profileSlug || DEFAULT_PROFILE_SLUG
     const java = settings.java === 'system' ? { install: 'manual' as const, absolutePath: 'java' } : { install: 'auto' as const }
     logger.log('Launching')
 
-    const launcher = new Launcher({
-      url: ADMINTOOL_URL,
-      root: 'goldfrite',
-      profile: { slug: profileSlug },
-      account: account,
-      cleaning: {
-        enabled: false
-      },
-      java: java,
-      memory: {
-        min: +settings.memory.min * 1024,
-        max: +settings.memory.max * 1024
-      },
-      window: {
-        width: settings.resolution.width,
-        height: settings.resolution.height,
-        fullscreen: settings.resolution.fullscreen
-      }
-    })
-
-    launcher.on('launch_compute_download', () => {
-      logger.log('Computing download...')
-      mainWindow.webContents.send('game:launch_compute_download')
-    })
-
-    launcher.on('launch_download', (download) => {
-      logger.log(`Downloading ${download.total.amount} files (${download.total.size} B).`)
-      mainWindow.webContents.send('game:launch_download', download)
-    })
-    launcher.on('download_progress', (progress) => {
-      mainWindow.webContents.send('game:download_progress', progress)
-    })
-    launcher.on('download_error', (error) => {
-      logger.error(`Error downloading ${error.filename}: ${error.message}`)
-      mainWindow.webContents.send('game:download_error', error)
-    })
-    launcher.on('download_end', (info) => {
-      logger.log(`Downloaded ${info.downloaded.amount} files.`)
-      mainWindow.webContents.send('game:download_end', info)
-    })
-
-    launcher.on('launch_install_loader', (loader) => {
-      logger.log(`Installing loader ${loader.type} ${loader.loaderVersion}...`)
-      mainWindow.webContents.send('game:launch_install_loader', loader)
-    })
-
-    launcher.on('launch_extract_natives', () => {
-      logger.log('Extracting natives...')
-      mainWindow.webContents.send('game:launch_extract_natives')
-    })
-    launcher.on('extract_progress', (progress) => {
-      logger.log(`Extracted ${progress.filename}.`)
-      mainWindow.webContents.send('game:extract_progress', progress)
-    })
-    launcher.on('extract_end', (info) => {
-      logger.log(`Extracted ${info.amount} files.`)
-      mainWindow.webContents.send('game:extract_end', info)
-    })
-
-    launcher.on('launch_copy_assets', () => {
-      logger.log('Copying assets...')
-      mainWindow.webContents.send('game:launch_copy_assets')
-    })
-    launcher.on('copy_progress', (progress) => {
-      logger.log(`Copied ${progress.filename} to ${progress.dest}.`)
-      mainWindow.webContents.send('game:copy_progress', progress)
-    })
-    launcher.on('copy_end', (info) => {
-      logger.log(`Copied ${info.amount} files.`)
-      mainWindow.webContents.send('game:copy_end', info)
-    })
-
-    launcher.on('launch_patch_loader', () => {
-      logger.log('Patching loader...')
-      mainWindow.webContents.send('game:launch_patch_loader')
-    })
-    launcher.on('patch_progress', (progress) => {
-      mainWindow.webContents.send('game:patch_progress', progress)
-    })
-    launcher.on('patch_error', (error) => {
-      logger.error(`Error patching ${error.filename}: ${error.message}`)
-      mainWindow.webContents.send('game:patch_error', error)
-    })
-    launcher.on('patch_end', (info) => {
-      logger.log(`Patched ${info.amount} files.`)
-      mainWindow.webContents.send('game:patch_end', info)
-    })
-
-    launcher.on('launch_check_java', () => {
-      logger.log('Checking Java...')
-      mainWindow.webContents.send('game:launch_check_java')
-    })
-    launcher.on('java_info', (info) => {
-      logger.log(`Using Java ${info.version} ${info.arch}`)
-      mainWindow.webContents.send('game:java_info', info)
-    })
-
-    launcher.on('launch_clean', () => {
-      logger.log('Cleaning game directory...')
-      mainWindow.webContents.send('game:launch_clean')
-    })
-    launcher.on('clean_progress', (progress) => {
-      mainWindow.webContents.send('game:clean_progress', progress)
-    })
-    launcher.on('clean_end', (info) => {
-      logger.log(`Cleaned ${info.amount} files.`)
-      mainWindow.webContents.send('game:clean_end', info)
-    })
-
-    launcher.on('launch_launch', (info) => {
-      logger.log(`Launching Minecraft ${info.version} (${info.type}${info.loaderVersion ? ` ${info.loaderVersion}` : ''})...`)
-      mainWindow.webContents.send('game:launch_launch', info)
-      if (settings.launcherAction === 'close') {
-        setTimeout(() => app.quit(), 5000)
-      } else if (settings.launcherAction === 'hide') {
-        setTimeout(() => mainWindow.minimize(), 5000)
-      }
-      mainWindow.webContents.send('game:launched')
-    })
-    launcher.on('launch_data', (message) => {
-      logger.log(message)
-      mainWindow.webContents.send('game:launch_data', message)
-    })
-    launcher.on('launch_close', (code) => {
-      logger.log(`Closed with code ${code}.`)
-      mainWindow.webContents.send('game:launch_close', code)
-    })
-
-    launcher.on('launch_debug', (message) => {
-      mainWindow.webContents.send('game:launch_debug', message)
-    })
-    launcher.on('patch_debug', (message) => {
-      mainWindow.webContents.send('game:patch_debug', message)
-    })
-
     try {
-      launcher.launch()
+      const loaderRes = await fetch(`${ADMINTOOL_URL}/api/loader/${slug}`)
+      if (!loaderRes.ok) {
+        throw new Error(`Failed to fetch loader info: HTTP ${loaderRes.status}`)
+      }
+      const loaderData = await loaderRes.json()
+
+      if (!loaderData.minecraftVersion) {
+        throw new Error('AdminTool loader response is missing minecraftVersion')
+      }
+
+      const launcher = new Launcher({
+        url: ADMINTOOL_URL,
+        root: GAME_ROOT,
+        profile: { slug },
+        minecraft: {
+          version: loaderData.minecraftVersion,
+          loader: {
+            loader: (loaderData.type?.toLowerCase() || 'vanilla') as 'vanilla' | 'forge' | 'neoforge' | 'fabric' | 'quilt',
+            version: loaderData.loaderVersion || undefined
+          },
+          modpackUrl: `${ADMINTOOL_URL}/api/files-updater/${slug}`,
+          args: (() => {
+            const extra: string[] = []
+            if (payload.connectToServer && payload.server?.ip) {
+              const port = payload.server.port ?? 25565
+              const address = `${payload.server.ip}:${port}`
+              if (isQuickPlaySupported(loaderData.minecraftVersion || '')) {
+                extra.push('--quickPlayMultiplayer', address)
+              } else {
+                extra.push('--server', payload.server.ip)
+                if (payload.server.port !== undefined && payload.server.port !== null) {
+                  extra.push('--port', payload.server.port.toString())
+                }
+              }
+            }
+            return [...(loaderData.args || []), ...extra]
+          })()
+        },
+        account: account,
+        cleaning: {
+          enabled: false
+        },
+        java: java,
+        memory: {
+          min: +settings.memory.min * 1024,
+          max: +settings.memory.max * 1024
+        },
+        window: {
+          width: settings.resolution.width,
+          height: settings.resolution.height,
+          fullscreen: settings.resolution.fullscreen
+        }
+      })
+
+      launcher.on('launch_compute_download', () => {
+        logger.log('Computing download...')
+        mainWindow.webContents.send('game:launch_compute_download')
+      })
+
+      launcher.on('launch_download', (download) => {
+        logger.log(`Downloading ${download.total.amount} files (${download.total.size} B).`)
+        mainWindow.webContents.send('game:launch_download', download)
+      })
+      launcher.on('download_progress', (progress) => {
+        mainWindow.webContents.send('game:download_progress', progress)
+      })
+      launcher.on('download_error', (error) => {
+        logger.error(`Error downloading ${error.filename}: ${error.message}`)
+        mainWindow.webContents.send('game:download_error', error)
+      })
+      launcher.on('download_end', (info) => {
+        logger.log(`Downloaded ${info.downloaded.amount} files.`)
+        mainWindow.webContents.send('game:download_end', info)
+      })
+
+      launcher.on('launch_install_loader', (loader) => {
+        logger.log(`Installing loader ${loader.type} ${loader.loaderVersion}...`)
+        mainWindow.webContents.send('game:launch_install_loader', loader)
+      })
+
+      launcher.on('launch_extract_natives', () => {
+        logger.log('Extracting natives...')
+        mainWindow.webContents.send('game:launch_extract_natives')
+      })
+      launcher.on('extract_progress', (progress) => {
+        logger.log(`Extracted ${progress.filename}.`)
+        mainWindow.webContents.send('game:extract_progress', progress)
+      })
+      launcher.on('extract_end', (info) => {
+        logger.log(`Extracted ${info.amount} files.`)
+        mainWindow.webContents.send('game:extract_end', info)
+      })
+
+      launcher.on('launch_copy_assets', () => {
+        logger.log('Copying assets...')
+        mainWindow.webContents.send('game:launch_copy_assets')
+      })
+      launcher.on('copy_progress', (progress) => {
+        logger.log(`Copied ${progress.filename} to ${progress.dest}.`)
+        mainWindow.webContents.send('game:copy_progress', progress)
+      })
+      launcher.on('copy_end', (info) => {
+        logger.log(`Copied ${info.amount} files.`)
+        mainWindow.webContents.send('game:copy_end', info)
+      })
+
+      launcher.on('launch_patch_loader', () => {
+        logger.log('Patching loader...')
+        mainWindow.webContents.send('game:launch_patch_loader')
+      })
+      launcher.on('patch_progress', (progress) => {
+        mainWindow.webContents.send('game:patch_progress', progress)
+      })
+      launcher.on('patch_error', (error) => {
+        logger.error(`Error patching ${error.filename}: ${error.message}`)
+        mainWindow.webContents.send('game:patch_error', error)
+      })
+      launcher.on('patch_end', (info) => {
+        logger.log(`Patched ${info.amount} files.`)
+        mainWindow.webContents.send('game:patch_end', info)
+      })
+
+      launcher.on('launch_check_java', () => {
+        logger.log('Checking Java...')
+        mainWindow.webContents.send('game:launch_check_java')
+      })
+      launcher.on('java_info', (info) => {
+        logger.log(`Using Java ${info.version} ${info.arch}`)
+        mainWindow.webContents.send('game:java_info', info)
+      })
+
+      launcher.on('launch_clean', () => {
+        logger.log('Cleaning game directory...')
+        mainWindow.webContents.send('game:launch_clean')
+      })
+      launcher.on('clean_progress', (progress) => {
+        mainWindow.webContents.send('game:clean_progress', progress)
+      })
+      launcher.on('clean_end', (info) => {
+        logger.log(`Cleaned ${info.amount} files.`)
+        mainWindow.webContents.send('game:clean_end', info)
+      })
+
+      launcher.on('launch_launch', (info) => {
+        logger.log(`Launching Minecraft ${info.version} (${info.type}${info.loaderVersion ? ` ${info.loaderVersion}` : ''})...`)
+        mainWindow.webContents.send('game:launch_launch', info)
+        mainWindow.webContents.send('game:running')
+        startGameTracking()
+        if (settings.launcherAction === 'close') {
+          setTimeout(() => app.quit(), 5000)
+        } else if (settings.launcherAction === 'hide') {
+          setTimeout(() => mainWindow.minimize(), 5000)
+        }
+        mainWindow.webContents.send('game:launched')
+      })
+      launcher.on('launch_data', (message) => {
+        logger.log(message)
+        mainWindow.webContents.send('game:launch_data', message)
+      })
+      launcher.on('launch_close', (code) => {
+        logger.log(`Closed with code ${code}.`)
+        mainWindow.webContents.send('game:launch_close', code)
+        clearGamePid()
+        mainWindow.webContents.send('game:stopped')
+      })
+
+      launcher.on('launch_debug', (message) => {
+        mainWindow.webContents.send('game:launch_debug', message)
+      })
+      launcher.on('patch_debug', (message) => {
+        mainWindow.webContents.send('game:patch_debug', message)
+      })
+
+      await launcher.launch()
     } catch (err) {
       logger.error('Launcher error:', err)
+      // Forward error to renderer UI
+      event.sender.send('launch_error', { message: err?.message ?? String(err) })
     }
   })
 }
-

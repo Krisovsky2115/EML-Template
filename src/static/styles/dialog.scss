@@ -17,7 +17,7 @@
   animation: fadeInDialog 0.2s ease;
 
   .dialog-box {
-    background: rgba(30, 30, 30);
+    background: var(--bg-paper);
     padding: 24px;
     border-radius: 8px;
     width: 90%;

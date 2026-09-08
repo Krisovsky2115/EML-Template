@@ -20,7 +20,9 @@
   }
 
   h1 {
-    font-size: 24px;
+    font-family: 'League Spartan', 'Poppins', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
     margin-bottom: 5px;
   }
 
@@ -31,6 +33,56 @@
   }
 
   /* .btn-microsoft is now defined in main.scss/Global Buttons */
+
+  .login-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: var(--text-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .crack-login {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .crack-nick-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--btn-radius);
+      color: var(--text-main);
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      transition: border-color 0.2s;
+
+      &::placeholder {
+        color: var(--text-muted);
+      }
+
+      &:focus {
+        border-color: var(--primary);
+      }
+    }
+
+    .crack-hint {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.35);
+    }
+  }
 
   .login-footer {
     margin-top: 20px;

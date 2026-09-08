@@ -113,16 +113,17 @@ a {
   }
 }
 
-/* Primary Button (Orange) */
+/* Primary Button (Yellow — FlugCraft brand) */
 .btn-primary {
   background: var(--primary);
-  color: white;
-  box-shadow: 0 4px 10px rgba(255, 87, 34, 0.3);
+  color: var(--on-primary);
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(255, 222, 89, 0.15);
 
   &:hover:not(:disabled) {
     background: var(--primary-hover);
     transform: translateY(-1px);
-    box-shadow: 0 6px 15px rgba(255, 87, 34, 0.4);
+    box-shadow: 0 6px 15px rgba(255, 222, 89, 0.25);
   }
 
   &:active:not(:disabled) {
@@ -182,7 +183,7 @@ a {
 
   &:hover {
     color: var(--primary);
-    background: rgba(255, 87, 34, 0.1);
+    background: rgba(255, 222, 89, 0.08);
   }
 }
 

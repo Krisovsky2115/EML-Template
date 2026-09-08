@@ -1,6 +1,7 @@
 import { setBlockingView, setUser, setView } from './state'
 import { auth, background, bootstraps, maintenance, skin } from './ipc'
 import logger from 'electron-log/renderer'
+import { DEFAULT_SKIN } from './shared'
 
 const DEFAULT_BACKGROUND = '/src/static/images/bg.png'
 const dateFormatOptions: Intl.DateTimeFormatOptions = {
@@ -55,8 +56,8 @@ export async function bootstrap() {
     setBlockingView('update')
     await new Promise((r) => setTimeout(r, 500))
     bootstraps.downloadProgress((value) => {
-      progressLabel!.innerText = `Downloading update...`
-      const percent = ((value.downloaded.size / value.total.amount) * 100).toFixed(2)
+      progressLabel!.innerText = `Pobieranie aktualizacji...`
+      const percent = Math.min(100, Math.round((value.downloaded.size / value.total.size) * 100))
       progressPercent!.innerText = `${percent}%`
       progressBar!.style.width = `${percent}%`
     })
@@ -94,9 +95,18 @@ export async function bootstrap() {
     if (bgElement) bgElement.style.backgroundImage = `url('${bgUrl}')`
 
     if (session.success) {
-      const [__, skins, capes, avatar] = await Promise.all([skin.reload(session.account), skin.getSkin(), skin.getCape(), skin.getAvatar()])
-
-      setUser(session.account, { skins, capes, avatar })
+      if (session.account.meta.type === 'crack') {
+        // Skin API doesn't support crack accounts — fall back to the default skin
+        setUser(session.account, { skins: [{ ...DEFAULT_SKIN }], capes: [], avatar: null })
+      } else {
+        const [__, skins, capes, avatar] = await Promise.all([
+          skin.reload(session.account),
+          skin.getSkin(),
+          skin.getCape(),
+          skin.getAvatar()
+        ])
+        setUser(session.account, { skins, capes, avatar })
+      }
       setView('home')
     } else {
       setView('login')

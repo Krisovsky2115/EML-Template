@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import type { IGameSettings, ISystemInfo } from './handlers/settings'
 import type { IAuthResponse } from './handlers/auth'
+import type { IShopProduct } from './handlers/shop'
 import type {
   Account,
   BootstrapsEvents,
@@ -25,16 +26,24 @@ console.log('Preload script loaded')
 contextBridge.exposeInMainWorld('api', {
   auth: {
     login: (): Promise<IAuthResponse> => ipcRenderer.invoke('auth:login'),
+    loginCrack: (username: string): Promise<IAuthResponse> => ipcRenderer.invoke('auth:loginCrack', username),
     refresh: (): Promise<IAuthResponse> => ipcRenderer.invoke('auth:refresh'),
     logout: (): Promise<{ success: boolean }> => ipcRenderer.invoke('auth:logout')
   },
   profiles: {
     get: (): Promise<any[]> => ipcRenderer.invoke('profiles:get')
   },
+  shop: {
+    getProducts: (): Promise<IShopProduct[]> => ipcRenderer.invoke('shop:get_products')
+  },
+  player: {
+    getRank: (username: string): Promise<string> => ipcRenderer.invoke('player:get_rank', username)
+  },
   game: {
-    launch: (payload: { account: Account; settings: IGameSettings; profileSlug: string }) => {
+    launch: (payload: { account: Account; settings: IGameSettings; profileSlug: string; connectToServer?: boolean; server?: { ip: string; port?: number | null } }) => {
       ipcRenderer.invoke('game:launch', payload)
     },
+    stop: () => ipcRenderer.invoke('game:stop'),
 
     launchComputeDownload: (callback: () => void) => ipcRenderer.on('game:launch_compute_download', (_event) => callback()),
 
@@ -60,6 +69,7 @@ contextBridge.exposeInMainWorld('api', {
       ipcRenderer.on('game:copy_progress', (_event, value) => callback(value)),
     copyEnd: (callback: (value: FilesManagerEvents['copy_end'][0]) => void) => ipcRenderer.on('game:copy_end', (_event, value) => callback(value)),
     launchPatchLoader: (callback: () => void) => ipcRenderer.on('game:launch_patch_loader', (_event) => callback()),
+    launchError: (callback: (payload: any) => void) => ipcRenderer.on('launch_error', (_event, payload) => callback(payload)),
     patchProgress: (callback: (value: PatcherEvents['patch_progress'][0]) => void) =>
       ipcRenderer.on('game:patch_progress', (_event, value) => callback(value)),
     patchError: (callback: (value: PatcherEvents['patch_error'][0]) => void) =>
@@ -81,7 +91,9 @@ contextBridge.exposeInMainWorld('api', {
     launchClose: (callback: (value: any) => void) => ipcRenderer.on('game:launch_close', (_event, value) => callback(value)),
     launchDebug: (callback: (value: LauncherEvents['launch_debug'][0]) => void) =>
       ipcRenderer.on('game:launch_debug', (_event, value) => callback(value)),
-    patchDebug: (callback: (value: PatcherEvents['patch_debug'][0]) => void) => ipcRenderer.on('game:patch_debug', (_event, value) => callback(value))
+    patchDebug: (callback: (value: PatcherEvents['patch_debug'][0]) => void) => ipcRenderer.on('game:patch_debug', (_event, value) => callback(value)),
+    running: (callback: () => void) => ipcRenderer.on('game:running', (_event) => callback()),
+    stopped: (callback: () => void) => ipcRenderer.on('game:stopped', (_event) => callback())
   },
   skin: {
     reload: (account: Account): Promise<void | null> => ipcRenderer.invoke('skin:reload', account),

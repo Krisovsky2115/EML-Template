@@ -4,7 +4,7 @@ import { skin } from './ipc'
 import { Dialog } from './views/dialog'
 import logger from 'electron-log/renderer'
 
-const DEFAULT_SKIN = {
+export const DEFAULT_SKIN: ISkin = {
   id: 'steve',
   url: 'http://textures.minecraft.net/texture/d5c4ee5ce20aed9e33e866c66caa37178606234b3721084bf01d13320fb2eb3f',
   variant: 'classic',

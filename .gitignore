@@ -26,3 +26,4 @@ release
 
 /dist-electron
 dist-electron/preload.js
+

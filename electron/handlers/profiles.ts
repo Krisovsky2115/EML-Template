@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
 import { Profiles } from 'eml-lib'
 import logger from 'electron-log/main'
-import { ADMINTOOL_URL } from '../const'
+import { ADMINTOOL_URL, DEFAULT_PROFILE_SLUG } from '../const'
 
 export function registerProfilesHandlers() {
   ipcMain.handle('profiles:get', async () => {
@@ -9,7 +9,8 @@ export function registerProfilesHandlers() {
 
     try {
       const list = await profiles.getProfiles()
-      const sorted = [list.find((p) => p.isDefault)!, ...list.filter((p) => !p.isDefault)]
+      const defaultProfile = list.find((p) => p.isDefault) ?? list.find((p) => p.slug === DEFAULT_PROFILE_SLUG)
+      const sorted = defaultProfile ? [defaultProfile, ...list.filter((p) => p.slug !== defaultProfile.slug)] : list
       return sorted
     } catch (err) {
       logger.error('Failed to fetch profiles:', err)

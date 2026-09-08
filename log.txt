@@ -1,0 +1,249 @@
+Dawid@DESKTOP-890526U MINGW64 /d/Mc Launcher/EML-Template (main)
+$ npm run release:win
+
+> eml-template@1.2.0 release:win
+> npm run build && electron-builder --win
+
+
+> eml-template@1.2.0 build
+> tsc && vite build
+
+vite v8.0.10 building client environment for production...
+✓ 51 modules transformed.
+computing gzip size...
+dist/index.html                     15.45 kB │ gzip:   3.64 kB
+dist/assets/logo-Dn5NEZLk.png      688.02 kB
+dist/assets/bg-CYWaYbLa.png      3,357.03 kB
+dist/assets/silver-CURq5JN9.png  5,647.02 kB
+dist/assets/gold-BfpscSMZ.png    5,858.12 kB
+dist/assets/box-CBFqZQd-.png     5,918.41 kB
+dist/assets/bronze-BhYazaug.png  5,953.21 kB
+dist/assets/index-BMAAS1vt.css      19.67 kB │ gzip:   4.31 kB
+dist/assets/index-DLxh6qLF.js      618.21 kB │ gzip: 161.64 kB
+
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://ro
+lldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[PLUGIN_TIMINGS] Warning: Your build spent significant time in plugin `vite:css`
+. See https://rolldown.rs/options/checks#plugintimings for more details.
+
+✓ built in 3.98s
+vite v8.0.10 building client environment for production...
+✓ 255 modules transformed.
+computing gzip size...
+dist-electron/chunk-DULCnGEH.js    0.69 kB │ gzip:  0.38 kB
+dist-electron/png-CTqDdKWD.js     29.06 kB │ gzip:  8.81 kB
+dist-electron/main.js            156.94 kB │ gzip: 44.92 kB
+dist-electron/main-BIBnZMmz.js   236.89 kB │ gzip: 73.03 kB
+
+✓ built in 991ms
+vite v8.0.10 building client environment for production...
+✓ 2 modules transformed.
+computing gzip size...
+dist-electron/preload.js  3.58 kB │ gzip: 0.81 kB
+
+✓ built in 74ms
+  • electron-builder  version=26.8.1 os=10.0.19045
+  • loaded configuration  file=package.json ("build" field)
+  • writing effective config  file=release\builder-effective-config.yaml
+  • executing @electron/rebuild  electronVersion=41.5.0 arch=x64 buildFromSource
+=false workspaceRoot=D:\Mc Launcher\EML-Template projectDir=./ appDir=./
+  • installing native dependencies  arch=x64
+  • completed installing native dependencies
+  • packaging       platform=win32 arch=x64 electron=41.5.0 appOutDir=release\wi
+n-unpacked
+  • downloading     url=https://github.com/electron/electron/releases/download/v
+41.5.0/electron-v41.5.0-win32-x64.zip size=143 MB parts=8
+  • downloaded      url=https://github.com/electron/electron/releases/download/v
+41.5.0/electron-v41.5.0-win32-x64.zip duration=13.305s
+  • searching for node modules  pm=npm searchDir=D:\Mc Launcher\EML-Template
+(node:27820) [DEP0190] DeprecationWarning: Passing args to a child process with
+shell option true can lead to security vulnerabilities, as the arguments are not
+ escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  • duplicate dependency references  dependencies=["is-glob@4.0.3","electron-upd
+ater@6.8.3","debug@4.4.3","@types/node@24.12.2","@types/node@24.12.2","@types/re
+sponselike@1.0.3","@types/node@24.12.2","get-stream@5.2.0","responselike@2.0.1",
+"debug@4.4.3","@types/node@24.12.2","debug@4.4.3","once@1.4.0","@parcel/watcher@
+2.5.6","chokidar@4.0.3"]
+  • updating asar integrity executable resource  executablePath=release\win-unpa
+cked\FlugLauncher.exe
+  • downloading     url=https://github.com/electron-userland/electron-builder-bi
+naries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z size=5.6 MB part
+s=1
+  • downloaded      url=https://github.com/electron-userland/electron-builder-bi
+naries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z duration=1.277s
+  ⨯ cannot execute  cause=exit status 2
+                    out=
+    7-Zip (a) 21.07 (x64) : Copyright (c) 1999-2021 Igor Pavlov : 2021-12-26
+
+    Scanning the drive for archives:
+    1 file, 5635384 bytes (5504 KiB)
+
+    Extracting archive: C:\Users\Dawid\AppData\Local\electron-builder\Cache\winC
+odeSign\048954623.7z
+    --
+    Path = C:\Users\Dawid\AppData\Local\electron-builder\Cache\winCodeSign\04895
+4623.7z
+    Type = 7z
+    Physical Size = 5635384
+    Headers Size = 1492
+    Method = LZMA2:24m LZMA:20 BCJ2
+    Solid = +
+    Blocks = 2
+
+
+    Sub items Errors: 2
+
+    Archives with Errors: 1
+
+    Sub items Errors: 2
+
+                    errorOut=ERROR: Cannot create symbolic link : Klient nie ma
+wymaganych uprawnie�. : C:\Users\Dawid\AppData\Local\electron-builder\Cache\winC
+odeSign\048954623\darwin\10.12\lib\libcrypto.dylib
+    ERROR: Cannot create symbolic link : Klient nie ma wymaganych uprawnie�. : C
+:\Users\Dawid\AppData\Local\electron-builder\Cache\winCodeSign\048954623\darwin\
+10.12\lib\libssl.dylib
+
+                    command='D:\Mc Launcher\EML-Template\node_modules\7zip-bin\w
+in\x64\7za.exe' x -snld -bd 'C:\Users\Dawid\AppData\Local\electron-builder\Cache
+\winCodeSign\048954623.7z' '-oC:\Users\Dawid\AppData\Local\electron-builder\Cach
+e\winCodeSign\048954623'
+                    workingDir=C:\Users\Dawid\AppData\Local\electron-builder\Cac
+he\winCodeSign
+  • downloading     url=https://github.com/electron-userland/electron-builder-bi
+naries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z size=5.6 MB part
+s=1
+  • downloaded      url=https://github.com/electron-userland/electron-builder-bi
+naries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z duration=1.004s
+  ⨯ cannot execute  cause=exit status 2
+                    out=
+    7-Zip (a) 21.07 (x64) : Copyright (c) 1999-2021 Igor Pavlov : 2021-12-26
+
+    Scanning the drive for archives:
+    1 file, 5635384 bytes (5504 KiB)
+
+    Extracting archive: C:\Users\Dawid\AppData\Local\electron-builder\Cache\winC
+odeSign\377267183.7z
+    --
+    Path = C:\Users\Dawid\AppData\Local\electron-builder\Cache\winCodeSign\37726
+7183.7z
+    Type = 7z
+    Physical Size = 5635384
+    Headers Size = 1492
+    Method = LZMA2:24m LZMA:20 BCJ2
+    Solid = +
+    Blocks = 2
+
+
+    Sub items Errors: 2
+
+    Archives with Errors: 1
+
+    Sub items Errors: 2
+
+                    errorOut=ERROR: Cannot create symbolic link : Klient nie ma
+wymaganych uprawnie�. : C:\Users\Dawid\AppData\Local\electron-builder\Cache\winC
+odeSign\377267183\darwin\10.12\lib\libcrypto.dylib
+    ERROR: Cannot create symbolic link : Klient nie ma wymaganych uprawnie�. : C
+:\Users\Dawid\AppData\Local\electron-builder\Cache\winCodeSign\377267183\darwin\
+10.12\lib\libssl.dylib
+
+                    command='D:\Mc Launcher\EML-Template\node_modules\7zip-bin\w
+in\x64\7za.exe' x -snld -bd 'C:\Users\Dawid\AppData\Local\electron-builder\Cache
+\winCodeSign\377267183.7z' '-oC:\Users\Dawid\AppData\Local\electron-builder\Cach
+e\winCodeSign\377267183'
+                    workingDir=C:\Users\Dawid\AppData\Local\electron-builder\Cac
+he\winCodeSign
+  • downloading     url=https://github.com/electron-userland/electron-builder-bi
+naries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z size=5.6 MB part
+s=1
+  • downloaded      url=https://github.com/electron-userland/electron-builder-bi
+naries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z duration=1s
+  ⨯ cannot execute  cause=exit status 2
+                    out=
+    7-Zip (a) 21.07 (x64) : Copyright (c) 1999-2021 Igor Pavlov : 2021-12-26
+
+    Scanning the drive for archives:
+    1 file, 5635384 bytes (5504 KiB)
+
+    Extracting archive: C:\Users\Dawid\AppData\Local\electron-builder\Cache\winC
+odeSign\384026079.7z
+    --
+    Path = C:\Users\Dawid\AppData\Local\electron-builder\Cache\winCodeSign\38402
+6079.7z
+    Type = 7z
+    Physical Size = 5635384
+    Headers Size = 1492
+    Method = LZMA2:24m LZMA:20 BCJ2
+    Solid = +
+    Blocks = 2
+
+
+    Sub items Errors: 2
+
+    Archives with Errors: 1
+
+    Sub items Errors: 2
+
+                    errorOut=ERROR: Cannot create symbolic link : Klient nie ma
+wymaganych uprawnie�. : C:\Users\Dawid\AppData\Local\electron-builder\Cache\winC
+odeSign\384026079\darwin\10.12\lib\libcrypto.dylib
+    ERROR: Cannot create symbolic link : Klient nie ma wymaganych uprawnie�. : C
+:\Users\Dawid\AppData\Local\electron-builder\Cache\winCodeSign\384026079\darwin\
+10.12\lib\libssl.dylib
+
+                    command='D:\Mc Launcher\EML-Template\node_modules\7zip-bin\w
+in\x64\7za.exe' x -snld -bd 'C:\Users\Dawid\AppData\Local\electron-builder\Cache
+\winCodeSign\384026079.7z' '-oC:\Users\Dawid\AppData\Local\electron-builder\Cach
+e\winCodeSign\384026079'
+                    workingDir=C:\Users\Dawid\AppData\Local\electron-builder\Cac
+he\winCodeSign
+  • downloading     url=https://github.com/electron-userland/electron-builder-bi
+naries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z size=5.6 MB part
+s=1
+  • downloaded      url=https://github.com/electron-userland/electron-builder-bi
+naries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z duration=992ms
+  ⨯ cannot execute  cause=exit status 2
+                    out=
+    7-Zip (a) 21.07 (x64) : Copyright (c) 1999-2021 Igor Pavlov : 2021-12-26
+
+    Scanning the drive for archives:
+    1 file, 5635384 bytes (5504 KiB)
+
+    Extracting archive: C:\Users\Dawid\AppData\Local\electron-builder\Cache\winC
+odeSign\043602867.7z
+    --
+    Path = C:\Users\Dawid\AppData\Local\electron-builder\Cache\winCodeSign\04360
+2867.7z
+    Type = 7z
+    Physical Size = 5635384
+    Headers Size = 1492
+    Method = LZMA2:24m LZMA:20 BCJ2
+    Solid = +
+    Blocks = 2
+
+
+    Sub items Errors: 2
+
+    Archives with Errors: 1
+
+    Sub items Errors: 2
+
+                    errorOut=ERROR: Cannot create symbolic link : Klient nie ma
+wymaganych uprawnie�. : C:\Users\Dawid\AppData\Local\electron-builder\Cache\winC
+odeSign\043602867\darwin\10.12\lib\libcrypto.dylib
+    ERROR: Cannot create symbolic link : Klient nie ma wymaganych uprawnie�. : C
+:\Users\Dawid\AppData\Local\electron-builder\Cache\winCodeSign\043602867\darwin\
+10.12\lib\libssl.dylib
+
+                    command='D:\Mc Launcher\EML-Template\node_modules\7zip-bin\w
+in\x64\7za.exe' x -snld -bd 'C:\Users\Dawid\AppData\Local\electron-builder\Cache
+\winCodeSign\043602867.7z' '-oC:\Users\Dawid\AppData\Local\electron-builder\Cach
+e\winCodeSign\043602867'
+                    workingDir=C:\Users\Dawid\AppData\Local\electron-builder\Cac
+he\winCodeSign

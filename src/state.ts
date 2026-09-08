@@ -92,7 +92,7 @@ function getAccountIcon(type: 'msa' | 'yggdrasil' | 'azuriom' | 'crack') {
     case 'azuriom':
       return '<i class="fa-brands fa-globe"></i>Azuriom account'
     case 'crack':
-      return '<i class="fa-solid fa-user-slash"></i>Cracked account'
+      return '<i class="fa-solid fa-user-slash"></i>Konto non-premium'
     default:
       return 'Unknown account type'
   }

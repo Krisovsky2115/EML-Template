@@ -1,10 +1,10 @@
 {
-  "name": "eml-template",
-  "productName": "EML Template",
-  "author": "GoldFrite",
-  "description": "Template launcher with EML Lib",
+  "name": "FlugLauncher",
+  "productName": "FlugLauncher",
+  "author": "FlugCraft Team",
+  "description": "Klient gry minecraft przeznaczony dla serwera FlugCraft.pl",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.2.1",
   "license": "MIT",
   "main": "dist-electron/main.js",
   "scripts": {
@@ -15,9 +15,9 @@
     "release:lin": "npm run build && electron-builder --linux"
   },
   "build": {
-    "appId": "com.eml.template",
-    "productName": "EML Template",
-    "copyright": "Copyright © 2026 EML",
+    "appId": "pl.flugcraft.launcher",
+    "productName": "FlugLauncher",
+    "copyright": "Copyright © 2026 FlugCraft",
     "directories": {
       "output": "release",
       "buildResources": "build"
@@ -40,10 +40,14 @@
     ],
     "publish": {
       "provider": "generic",
-      "url": "https://emlproject.pages.dev/"
+      "url": "https://modadmin.flugcraft.pl/files/bootstraps/win"
     },
     "win": {
       "target": "nsis",
+      "publish": {
+        "provider": "generic",
+        "url": "https://modadmin.flugcraft.pl/files/bootstraps/win"
+      },
       "icon": "build/icon.ico",
       "legalTrademarks": "EML Project"
     },
@@ -53,12 +57,16 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "EML Template",
+      "shortcutName": "FlugLauncher",
       "deleteAppDataOnUninstall": true,
       "artifactName": "${productName}-Setup-${version}.${ext}",
-      "uninstallDisplayName": "EML Template"
+      "uninstallDisplayName": "FlugLauncher"
     },
     "mac": {
+      "publish": {
+        "provider": "generic",
+        "url": "https://modadmin.flugcraft.pl/files/bootstraps/mac"
+      },
       "target": [
         "dmg",
         "zip"
@@ -95,6 +103,10 @@
       }
     },
     "linux": {
+      "publish": {
+        "provider": "generic",
+        "url": "https://modadmin.flugcraft.pl/files/bootstraps/lin"
+      },
       "target": [
         "AppImage",
         "deb",
@@ -102,7 +114,8 @@
       ],
       "icon": "build/icon.png",
       "category": "Game",
-      "description": "Template launcher with EML Lib",
+      "maintainer": "FlugCraft <kontakt@flugcraft.pl>",
+      "description": "FlugLauncher - launcher serwera FlugCraft",
       "artifactName": "${productName}-${version}.${ext}"
     }
   },

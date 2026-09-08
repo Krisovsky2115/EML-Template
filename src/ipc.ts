@@ -1,5 +1,6 @@
 import type { IGameSettings, ISystemInfo } from '../electron/handlers/settings'
 import type { IAuthResponse } from '../electron/handlers/auth'
+import type { IShopProduct } from '../electron/handlers/shop'
 import type {
   Account,
   BootstrapsEvents,
@@ -26,6 +27,7 @@ declare global {
     api: {
       auth: {
         login: () => Promise<IAuthResponse>
+        loginCrack: (username: string) => Promise<IAuthResponse>
         refresh: () => Promise<IAuthResponse>
         logout: () => Promise<{ success: boolean }>
       }
@@ -43,6 +45,12 @@ declare global {
       }
       profiles: {
         get: () => Promise<IProfile[]>
+      }
+      shop: {
+        getProducts: () => Promise<IShopProduct[]>
+      }
+      player: {
+        getRank: (username: string) => Promise<string>
       }
       server: {
         getStatus: (ip: string, port?: number) => Promise<IServerStatus | null>
@@ -66,7 +74,8 @@ declare global {
         error: (callback: (value: BootstrapsEvents['bootstraps_error'][0]) => void) => void
       }
       game: {
-        launch: (payload: { account: Account; settings: IGameSettings, profileSlug: string }) => Promise<void>
+        launch: (payload: { account: Account; settings: IGameSettings; profileSlug: string; connectToServer?: boolean; server?: { ip: string; port?: number | null } }) => Promise<void>
+        stop: () => Promise<void>
 
         launchComputeDownload: (callback: () => void) => void
 
@@ -93,6 +102,7 @@ declare global {
         javaInfo: (callback: (value: JavaEvents['java_info'][0]) => void) => void
 
         launchClean: (callback: () => void) => void
+        launchError: (callback: (payload: any) => void) => void
         cleanProgress: (callback: (value: CleanerEvents['clean_progress'][0]) => void) => void
         cleanEnd: (callback: (value: CleanerEvents['clean_end'][0]) => void) => void
         launchLaunch: (callback: (value: LauncherEvents['launch_launch'][0]) => void) => void
@@ -102,6 +112,8 @@ declare global {
         launchClose: (callback: (value: any) => void) => void
         launchDebug: (callback: (value: LauncherEvents['launch_debug'][0]) => void) => void
         patchDebug: (callback: (value: PatcherEvents['patch_debug'][0]) => void) => void
+        running: (callback: () => void) => void
+        stopped: (callback: () => void) => void
       }
       settings: {
         get: () => Promise<IGameSettings>
@@ -117,6 +129,7 @@ declare global {
 
 export const auth = {
   login: async () => await window.api.auth.login(),
+  loginCrack: async (username: string) => await window.api.auth.loginCrack(username),
   logout: async () => await window.api.auth.logout(),
   refresh: async () => await window.api.auth.refresh()
 }
@@ -136,6 +149,14 @@ export const skin = {
 
 export const profiles = {
   get: async () => await window.api.profiles.get()
+}
+
+export const shop = {
+  getProducts: async () => await window.api.shop.getProducts()
+}
+
+export const player = {
+  getRank: async (username: string) => await window.api.player.getRank(username)
 }
 
 export const server = {
@@ -165,7 +186,7 @@ export const bootstraps = {
 }
 
 export const game = {
-  launch: async (payload: { account: Account; settings: IGameSettings, profileSlug: string }) => await window.api.game.launch(payload),
+  launch: async (payload: { account: Account; settings: IGameSettings; profileSlug: string; connectToServer?: boolean; server?: { ip: string; port?: number | null } }) => await window.api.game.launch(payload),
   launchComputeDownload: (callback: () => void) => window.api.game.launchComputeDownload(callback),
   launchDownload: (callback: (value: LauncherEvents['launch_download'][0]) => void) => window.api.game.launchDownload(callback),
   downloadProgress: (callback: (value: DownloaderEvents['download_progress'][0]) => void) => window.api.game.downloadProgress(callback),
@@ -179,6 +200,7 @@ export const game = {
   copyProgress: (callback: (value: FilesManagerEvents['copy_progress'][0]) => void) => window.api.game.copyProgress(callback),
   copyEnd: (callback: (value: FilesManagerEvents['copy_end'][0]) => void) => window.api.game.copyEnd(callback),
   launchPatchLoader: (callback: () => void) => window.api.game.launchPatchLoader(callback),
+  launchError: (callback: (payload: any) => void) => window.api.game.launchError(callback),
   patchProgress: (callback: (value: PatcherEvents['patch_progress'][0]) => void) => window.api.game.patchProgress(callback),
   patchError: (callback: (value: PatcherEvents['patch_error'][0]) => void) => window.api.game.patchError(callback),
   patchEnd: (callback: (value: PatcherEvents['patch_end'][0]) => void) => window.api.game.patchEnd(callback),
@@ -192,7 +214,10 @@ export const game = {
   launchData: (callback: (value: LauncherEvents['launch_data'][0]) => void) => window.api.game.launchData(callback),
   launchClose: (callback: (value: any) => void) => window.api.game.launchClose(callback),
   launchDebug: (callback: (value: LauncherEvents['launch_debug'][0]) => void) => window.api.game.launchDebug(callback),
-  patchDebug: (callback: (value: PatcherEvents['patch_debug'][0]) => void) => window.api.game.patchDebug(callback)
+  patchDebug: (callback: (value: PatcherEvents['patch_debug'][0]) => void) => window.api.game.patchDebug(callback),
+  stop: async () => await window.api.game.stop(),
+  running: (callback: () => void) => window.api.game.running(callback),
+  stopped: (callback: () => void) => window.api.game.stopped(callback)
 }
 
 export const settings = {

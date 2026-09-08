@@ -1,3 +1,5 @@
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+
 import { app, BrowserWindow, Menu, nativeTheme, shell } from 'electron'
 import path from 'node:path'
 import { registerAuthHandlers } from './handlers/auth'
@@ -11,9 +13,25 @@ import { registerBootstrapHandlers } from './handlers/bootstraps'
 import logger from 'electron-log/main'
 import { registerProfilesHandlers } from './handlers/profiles'
 import { registerSkinHandlers } from './handlers/skin'
+import { registerShopHandlers } from './handlers/shop'
 
-const APP_TITLE = 'EML Template'
-const BG_COLOR = '#121212'
+app.commandLine.appendSwitch('ignore-certificate-errors')
+
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+    }
+  })
+}
+
+const APP_TITLE = 'FlugLauncher'
+const BG_COLOR = '#0b1110'
 
 let mainWindow: BrowserWindow | null = null
 
@@ -67,7 +85,7 @@ function configureAppMenu() {
     applicationName: APP_TITLE,
     applicationVersion: app.getVersion(),
     version: 'Build 2026.1',
-    copyright: 'Copyright © 2026 EML',
+    copyright: 'Copyright © 2026 FlugCraft',
     credits: 'Developed with EML Lib & Electron',
     iconPath: path.join(__dirname, '../build/icon.png')
   })
@@ -128,6 +146,7 @@ app.whenReady().then(() => {
     registerBootstrapHandlers(mainWindow)
     registerLauncherHandlers(mainWindow)
     registerSettingsHandlers()
+    registerShopHandlers()
   }
 })
 

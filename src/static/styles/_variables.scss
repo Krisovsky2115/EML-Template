@@ -1,17 +1,22 @@
 :root {
-  /* Colors */
-  --primary: #ff5722;
-  --primary-hover: #e64a19;
+  /* Colors — FlugCraft brand (flugcraft.pl theme) */
+  --primary: #ffde59;
+  --secondary: #7ed957;
+  --primary-hover: #e5c84a;
+  --on-primary: #172016;
 
-
-  --bg-dark: #121212;
-  --text-main: #ffffff;
-  --text-muted: #aaaaaa;
+  --bg-dark: #0b1110;
+  --bg-paper: #121b19;
+  --text-main: #f8fbf5;
+  --text-muted: #c9d3ca;
 
   /* Glassmorphism */
-  --glass-bg: rgba(30, 30, 30, 0.65);
+  --glass-bg: rgba(18, 27, 25, 0.65);
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-blur: 12px;
+
+  /* Accent glow (site's green tint) */
+  --accent-glow: rgba(126, 217, 87, 0.12);
 
   /* Shadows */
   --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -20,5 +25,5 @@
   --sidebar-width: 400px;
 
   /* UI System */
-  --btn-radius: 5px;
+  --btn-radius: 8px;
 }

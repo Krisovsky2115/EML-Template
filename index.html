@@ -1,14 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="pl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EML Template</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <title>FlugLauncher</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=League+Spartan:wght@700;800;900&family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
     <style>
       body {
-        background-color: #121212;
+        background-color: #0b1110;
         overflow: hidden;
       }
 
@@ -38,7 +41,7 @@
         align-items: center;
         height: 100vh;
         width: 100vw;
-        background-color: #121212;
+        background-color: #0b1110;
         transition: opacity 0.4s ease-in-out;
       }
 
@@ -65,7 +68,7 @@
     <div id="view-loading" class="loading" data-view="loading">
       <div class="loading-card">
         <p class="spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></p>
-        <p class="text">Loading...</p>
+        <p class="text">Ładowanie...</p>
       </div>
     </div>
 
@@ -81,11 +84,11 @@
     <div id="view-update" class="update" data-view="update">
       <div class="maintenance-card">
         <p class="up"><i class="fa-solid fa-circle-up"></i></p>
-        <h3>An update is available</h3>
-        <p class="text" id="update-text">Please wait while we update your launcher...</p>
+        <h3>Dostępna jest nowa wersja</h3>
+        <p class="text" id="update-text">Pobieramy aktualizację FlugLaunchera, to zajmie tylko chwilę...</p>
         <div class="progress-container" id="update-progress-container">
           <div class="progress-info">
-            <span id="update-progress-label">Downloading...</span>
+            <span id="update-progress-label">Pobieramy aktualizację FlugLaunchera, to zajmie tylko chwilę...</span>
             <span id="update-progress-percent">0%</span>
           </div>
           <div class="progress-bar-bg">
@@ -101,17 +104,33 @@
       <div id="view-login" class="view" data-view="login">
         <div class="login-card">
           <img src="/src/static/images/logo.png" class="logo" alt="Logo" />
-          <h1>Welcome</h1>
-          <p class="subtitle">Log in to verify your access.</p>
+          <h1>Cześć!</h1>
+          <p class="subtitle">Zaloguj się za pomocą jednej z wybranych metod!</p>
 
           <button id="btn-login-ms" class="btn btn-microsoft">
             <i class="fa-brands fa-microsoft"></i>
-            <span>Sign in with Microsoft</span>
+            <span>Zaloguj się z Microsoft</span>
           </button>
 
-          <div class="login-footer">
-            <small>No account yet? <a href="https://microsoft.com">Create one here</a></small>
+          <div class="login-divider"><span>lub</span></div>
+
+          <div class="crack-login">
+            <input
+              type="text"
+              id="input-crack-nick"
+              class="crack-nick-input"
+              placeholder="Nick (non-premium)"
+              maxlength="16"
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <button id="btn-login-crack" class="btn btn-secondary" disabled>
+              <i class="fa-solid fa-user"></i>
+              <span>Zagraj bez konta</span>
+            </button>
           </div>
+
+
         </div>
       </div>
 
@@ -122,7 +141,7 @@
               <img src="" id="user-avatar" alt="Skin" />
               <div class="user-details">
                 <span id="user-name">Undefined</span>
-                <span class="rank-badge">Member</span>
+                <span class="rank-badge">Gracz</span>
               </div>
             </div>
 
@@ -131,45 +150,18 @@
 
           <div class="sidebar-middle">
             <h3 class="shop-header">
-              <span>Shop</span>
+              <span>Sklep serwerowy</span>
               <span class="shop-link">
-                <a href="https://emlproject.pages.dev" target="_blank"><i class="fa-fw fa-solid fa-cart-shopping"></i> Visit shop...</a>
+                <a href="https://flugcraft.pl/shop" target="_blank"><i class="fa-fw fa-solid fa-cart-shopping"></i> Odwiedź sklep</a>
               </span>
             </h3>
-            <div class="shop-item">
-              <img src="src/static/images/gold.png" class="shop-item-image" alt="Gold Rank" />
-              <div class="shop-item-details">
-                <span class="item-name">Gold Rank</span>
-                <span class="item-price">$9.99</span>
-              </div>
-            </div>
-            <div class="shop-item">
-              <img src="src/static/images/silver.png" class="shop-item-image" alt="Silver Rank" />
-              <div class="shop-item-details">
-                <span class="item-name">Silver Rank</span>
-                <span class="item-price">$6.99</span>
-              </div>
-            </div>
-            <div class="shop-item">
-              <img src="src/static/images/bronze.png" class="shop-item-image" alt="Bronze Rank" />
-              <div class="shop-item-details">
-                <span class="item-name">Bronze Rank</span>
-                <span class="item-price">$3.99</span>
-              </div>
-            </div>
-            <div class="shop-item">
-              <img src="src/static/images/box.png" class="shop-item-image" alt="Mystery Box" />
-              <div class="shop-item-details">
-                <span class="item-name">Mystery Box</span>
-                <span class="item-price">$5.99</span>
-              </div>
-            </div>
+            <div class="shop-list" id="shop-list"></div>
           </div>
 
           <div class="sidebar-bottom">
             <div class="profile-selector-container" id="profile-selector">
               <div class="selected-profile">
-                <span id="current-profile-name">Select Profile</span>
+                <span id="current-profile-name">Wybierz profil</span>
                 <i class="fa-solid fa-chevron-down"></i>
               </div>
               <div class="profile-dropdown" id="profile-dropdown"></div>
@@ -178,7 +170,7 @@
             <div class="server-status">
               <div class="status-indicator" id="server-status-indicator">
                 <div class="status-dot pinging" id="server-status-dot"></div>
-                <span class="status-text" id="server-status-text">Pinging...</span>
+                <span class="status-text" id="server-status-text">Sprawdzanie...</span>
               </div>
               <div class="player-count" id="player-count"></div>
             </div>
@@ -188,9 +180,10 @@
 
               <div class="progress-container hidden" id="launch-progress-container">
                 <div class="progress-info">
-                  <span id="launch-progress-label">Downloading...</span>
+                  <span id="launch-progress-label">Pobieranie zasobów</span>
                   <span id="launch-progress-percent">0%</span>
                 </div>
+                <div class="progress-speed" id="launch-progress-speed"></div>
                 <div class="progress-bar-bg">
                   <div class="progress-bar-fill" id="launch-progress-bar"></div>
                 </div>
@@ -201,11 +194,10 @@
 
         <main class="home-content">
           <div class="news-header">
-            <h2>News feed</h2>
+            <h2>Co nowego</h2>
             <div class="social-links">
-              <a href="https://emlproject.com/discord/other" target="_blank" class="btn btn-icon-only"><i class="fa-brands fa-discord"></i></a>
-              <a href="https://x.com/EMLProject" target="_blank" class="btn btn-icon-only"><i class="fa-brands fa-x-twitter"></i></a>
-              <a href="https://emlproject.com" target="_blank" class="btn btn-icon-only"><i class="fa-solid fa-globe"></i></a>
+              <a href="https://flugcraft.pl/discord" target="_blank" class="btn btn-icon-only"><i class="fa-brands fa-discord"></i></a>
+              <a href="https://flugcraft.pl/" target="_blank" class="btn btn-icon-only"><i class="fa-solid fa-globe"></i></a>
             </div>
           </div>
 
@@ -222,21 +214,21 @@
           </button>
 
           <aside class="settings-sidebar">
-            <h2>Settings</h2>
+            <h2>Ustawienia aplikacji</h2>
             <nav>
-              <button class="btn nav-btn active" data-tab="game"><i class="fa-fw fa-solid fa-cubes"></i><span>Game</span></button>
-              <button class="btn nav-btn" data-tab="skin"><i class="fa-fw fa-solid fa-shirt"></i><span>Skin</span></button>
-              <button class="btn nav-btn" data-tab="account"><i class="fa-fw fa-solid fa-user"></i><span>Account</span></button>
+              <button class="btn nav-btn active" data-tab="game"><i class="fa-fw fa-solid fa-cubes"></i><span>Klient</span></button>
+              <button class="btn nav-btn" data-tab="skin"><i class="fa-fw fa-solid fa-shirt"></i><span>Skórka</span></button>
+              <button class="btn nav-btn" data-tab="account"><i class="fa-fw fa-solid fa-user"></i><span>Konto</span></button>
             </nav>
             <p id="version"></p>
           </aside>
 
           <main class="settings-content" id="settings-content">
             <section id="tab-game" class="tab-content active">
-              <h3>Minecraft configuration</h3>
+              <h3>Konfiguracja clienta</h3>
 
               <div class="setting-group">
-                <label><i class="fa-fw fa-solid fa-memory"></i>&nbsp;&nbsp;Allocated RAM</label>
+                <label><i class="fa-fw fa-solid fa-memory"></i>&nbsp;&nbsp;Pamięć RAM</label>
 
                 <div class="dual-slider-container">
                   <div class="slider-track"></div>
@@ -253,83 +245,93 @@
               </div>
 
               <div class="setting-group">
-                <label><i class="fa-fw fa-solid fa-display"></i>&nbsp;&nbsp;Window size</label>
+                <label><i class="fa-fw fa-solid fa-display"></i>&nbsp;&nbsp;Rozmiar okna gry</label>
                 <select id="resolution-select"></select>
               </div>
 
               <div class="setting-group">
-                <label for="launcher-action"><i class="fa-solid fa-power-off"></i>&nbsp;&nbsp;Action after launch</label>
+                <label for="launcher-action"><i class="fa-solid fa-power-off"></i>&nbsp;&nbsp;Akcja po uruchomieniu</label>
                 <div class="select-wrapper">
                   <select id="launcher-action-select">
-                    <option value="close">Close launcher</option>
-                    <option value="keep">Keep launcher open</option>
-                    <option value="hide">Hide launcher (minimize)</option>
+                    <option value="close">Zamknij launcher</option>
+                    <option value="keep">Zostaw launcher otwarty</option>
+                    <option value="hide">Ukryj launcher (minimalizuj)</option>
                   </select>
                 </div>
               </div>
 
               <div class="setting-group">
-                <label><i class="fa-brands fa-java"></i>&nbsp;&nbsp;Java version</label>
+                <label for="play-action"><i class="fa-solid fa-play"></i>&nbsp;&nbsp;Akcja po kliknięciu</label>
+                <div class="select-wrapper">
+                  <select id="play-action-select">
+                    <option value="server">Dołącz na serwer</option>
+                    <option value="game">Tylko uruchom</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-group">
+                <label><i class="fa-brands fa-java"></i>&nbsp;&nbsp;Wersja JAVA</label>
                 <div class="java-selector">
                   <select id="java-select">
-                    <option value="bundled">Use bundled Java (recommended)</option>
-                    <option value="system">Use system Java (PATH)</option>
+                    <option value="bundled">Użyj wbudowanej wersji (rekomendowane)</option>
+                    <option value="system">Użyj wersji systemowej (PATH)</option>
                   </select>
                 </div>
               </div>
             </section>
 
             <section class="tab-content skin-management" id="tab-skin">
-              <h3>Skin management</h3>
+              <h3> Zarządzanie skórkami</h3>
 
               <canvas id="skin-container"></canvas>
 
               <div class="setting-group">
-                <label><i class="fa-fw fa-solid fa-shirt"></i>&nbsp;&nbsp;Skins</label>
+                <label><i class="fa-fw fa-solid fa-shirt"></i>&nbsp;&nbsp;Skórki</label>
 
                 <div id="skin-gallery" class="skin-gallery"></div>
                 <div id="add-skin" class="add-skin">
-                  <p class="add-skin-title">Add skin</p>
+                  <p class="add-skin-title">Dodaj skórkę</p>
                   <div class="btns-add-skin">
-                    <button id="btn-add-skin-file" class="btn-add-skin active">File</button>
-                    <button id="btn-add-skin-url" class="btn-add-skin">URL</button>
+                    <button id="btn-add-skin-file" class="btn-add-skin active">Plik</button>
+                    <button id="btn-add-skin-url" class="btn-add-skin">Link</button>
                   </div>
 
                   <div id="form-add-skin-file">
-                    <label for="input-add-skin-file">Skin file:</label>
+                    <label for="input-add-skin-file">Plik skórki:</label>
                     <input type="file" id="input-add-skin-file" accept=".png" />
-                    <button class="btn btn-choose-file btn-secondary" id="btn-add-skin-choose-file">Choose file...</button>
+                    <button class="btn btn-choose-file btn-secondary" id="btn-add-skin-choose-file">Wybierz plik...</button>
                     <div id="div-add-skin-file-selected" class="selected-file" style="display: none">
-                      <span id="span-add-skin-file-name">No file chosen</span>
+                      <span id="span-add-skin-file-name">Nie wybrano pliku</span>
                       <button id="btn-selected-file-reset" class="btn btn-secondary btn-reset"><i class="fa-solid fa-times"></i></button>
                     </div>
                   </div>
 
                   <div id="form-add-skin-url" style="display: none">
-                    <label for="input-add-skin-url">Skin URL:</label>
+                    <label for="input-add-skin-url">URL skórki:</label>
                     <input type="text" id="input-add-skin-url" placeholder="https://..." />
                   </div>
 
-                  <label for="add-skin-variant-field">Variant:</label>
+                  <label for="add-skin-variant-field">Wariant:</label>
                   <div class="variant-options" id="add-skin-variant-field">
                     <input type="radio" id="input-add-skin-variant-classic" name="variant" value="classic" checked />
-                    <label for="input-add-skin-variant-classic">Classic</label>
+                    <label for="input-add-skin-variant-classic">Klasyczny</label>
                     <input type="radio" id="input-add-skin-variant-slim" name="variant" value="slim" />
-                    <label for="input-add-skin-variant-slim">Slim</label>
+                    <label for="input-add-skin-variant-slim">Uproszczony</label>
                   </div>
-                  <button id="btn-add-skin-submit" class="add-skin-btn-submit btn btn-secondary" disabled>Add and use</button>
+                  <button id="btn-add-skin-submit" class="add-skin-btn-submit btn btn-secondary" disabled>Dodaj i użyj</button>
                 </div>
               </div>
 
               <div class="setting-group">
-                <label><i class="fa-fw fa-solid fa-square"></i>&nbsp;&nbsp;Cape</label>
+                <label><i class="fa-fw fa-solid fa-square"></i>&nbsp;&nbsp;Peleryna</label>
 
                 <div id="cape-gallery" class="skin-gallery"></div>
               </div>
             </section>
 
             <section id="tab-account" class="tab-content">
-              <h3>Account management</h3>
+              <h3> Zarządzanie kontem</h3>
 
               <div class="account-card">
                 <div class="account-header">
@@ -337,15 +339,15 @@
                   <div class="account-details">
                     <span class="account-name" id="settings-user-name"></span>
                     <span class="account-uuid" id="settings-user-uuid">UUID: 550e8400-e29b...</span>
-                    <span class="account-type" id="settings-user-type"><i class="fa-brands fa-microsoft"></i>&nbsp;&nbsp;Microsoft Account</span>
+                    <span class="account-type" id="settings-user-type"><i class="fa-brands fa-microsoft"></i>&nbsp;&nbsp;Konto Microsoft</span>
                   </div>
                 </div>
 
                 <div class="account-actions">
                   <a href="https://www.xbox.com/play/user" target="_blank" class="btn btn-secondary">
-                    <i class="fa-fw fa-solid fa-external-link-alt"></i><span>Manage Xbox Account</span>
+                    <i class="fa-fw fa-solid fa-external-link-alt"></i><span>Zarządzaj kontem Xbox (Microsoft)</span>
                   </a>
-                  <button id="btn-logout" class="btn btn-danger"><i class="fa-fw fa-solid fa-right-from-bracket"></i><span>Log out</span></button>
+                  <button id="btn-logout" class="btn btn-danger"><i class="fa-fw fa-solid fa-right-from-bracket"></i><span>Wyloguj</span></button>
                 </div>
               </div>
             </section>
@@ -356,7 +358,7 @@
 
     <div id="custom-dialog" class="dialog-overlay hidden">
       <div class="dialog-box">
-        <h3 id="dialog-title" class="hidden">Notification</h3>
+        <h3 id="dialog-title" class="hidden">Powiadomienia</h3>
         <p id="dialog-message"></p>
         <div id="dialog-buttons" class="dialog-actions"></div>
       </div>
